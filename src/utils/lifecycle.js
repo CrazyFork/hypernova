@@ -23,7 +23,7 @@ export function hasMethod(name) {
  * @param ms
  * @returns {Promise}
  */
-export function raceTo(promise, ms, msg) {
+export function raceTo(promise, ms, msg) {  //:bm,
   return Promise.race([
     promise,
     new Promise(resolve => setTimeout(() => resolve(PROMISE_TIMEOUT), ms)),
@@ -53,6 +53,7 @@ export function raceTo(promise, ms, msg) {
 export function runAppLifecycle(lifecycle, plugins, config, error, ...args) {
   try {
     const promise = Promise.all(
+      // plugins has `lifecycle` methods & run them with desired params
       plugins.filter(hasMethod(lifecycle)).map(plugin => plugin[lifecycle](config, error, ...args)),
     );
 
@@ -146,7 +147,7 @@ export function errorSync(err, plugins, manager, token) {
  * @param {BatchManager} manager
  * @returns {Promise}
  */
-export function processJob(token, plugins, manager) {
+export function processJob(token, plugins, manager) { //:todo, review this
   return (
     // jobStart
     runLifecycle('jobStart', plugins, manager, token)
@@ -159,7 +160,7 @@ export function processJob(token, plugins, manager) {
         return manager.render(token);
       })
       // jobEnd
-      .then(() => {
+      .then(() => { // only log successfully rendering
         // afterRender
         runLifecycleSync('afterRender', plugins, manager, token);
 
@@ -178,7 +179,7 @@ export function processJob(token, plugins, manager) {
  *
  * Returns a promise resolving when all jobs in the batch complete.
  *
- * @param jobs
+ * @param jobs: {[key: string]: [plugin: Object]}
  * @param {Array<HypernovaPlugin>} plugins
  * @param {BatchManager} manager
  * @returns {Promise}

@@ -19,7 +19,9 @@ const loggerInterface = {
       ],
     });
 
-    delete loggerInterface.init;
+    // bm: only init once, this design i think is bad, if user called it again it would cause a runtime error
+    // it should explicitly throws an error
+    delete loggerInterface.init;  
   },
 
   error(message, meta) {

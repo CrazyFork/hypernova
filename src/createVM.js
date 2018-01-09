@@ -2,6 +2,7 @@ import lruCache from 'lru-cache';
 import crypto from 'crypto';
 import Module from './Module';
 
+// hash function that use sha1 method to generate a hex value
 function defaultGetKey(name, code) {
   const hash = crypto.createHash('sha1').update(code).digest('hex');
   return `${name}::${hash}`;

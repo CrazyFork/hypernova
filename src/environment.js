@@ -14,7 +14,7 @@ function del(obj) {
   return (key) => { delete obj[key]; };
 }
 
-function toFastProperties(obj) {
+function toFastProperties(obj) {    // :todo, 
   (function () {}).prototype = obj;
 }
 

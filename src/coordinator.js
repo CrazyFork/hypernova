@@ -10,7 +10,7 @@ export function getDefaultCPUs(realCount) {
     throw new TypeError('getDefaultCPUs must accept a positive integer');
   }
 
-  return realCount - 1 || 1;
+  return realCount - 1 || 1; // :bm, why n-1
 }
 
 export function getWorkerCount(getCPUs = getDefaultCPUs) {
@@ -84,7 +84,7 @@ export default (getCPUs) => {
     } else {
       logger.error(`Worker #${worker.id} died with code ${signal || code}. Restarting worker.`);
       const newWorker = cluster.fork();
-      newWorker.on('message', onWorkerMessage);
+      newWorker.on('message', onWorkerMessage); //:bm, notice the message payload 
     }
   });
 

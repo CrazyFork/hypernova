@@ -1,3 +1,14 @@
+# ----
+
+这个库核心的逻辑就是实现了一个node vm, 把所有view组件的请求走这个vm去渲染, 返回, 实现了安全性上的隔离。
+核心的文件就是和vm相关的 `createGetComponent.js, createVM.js, Module.js`. 这里边的逻辑其实可以好好
+研究下, 只是里边需要对node有很深的了解, 可能包括node的c++源码这一层。
+
+其他特性
+* node cluster 的封装运用
+
+
+
 # Hypernova
 
 > A service for server-side rendering your JavaScript views

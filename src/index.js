@@ -47,11 +47,13 @@ function makeValidDataAttribute(attr, value) {
   return `data-${encodedAttr}="${encodedValue}"`;
 }
 
+// encode data into script tag
 function toScript(attrs, data) {
   const dataAttributes = Object.keys(attrs).map(name => makeValidDataAttribute(name, attrs[name]));
   return `<script type="application/json" ${dataAttributes.join(' ')}>${LEFT}${encode(data)}${RIGHT}</script>`; // eslint-disable-line max-len
 }
 
+// decode data from script tag
 function fromScript(attrs) {
   const selectors = Object.keys(attrs)
     .map(name => `[${makeValidDataAttribute(name, attrs[name])}]`)
@@ -66,6 +68,8 @@ function fromScript(attrs) {
 function serialize(name, html, data) {
   const key = name.replace(/\W/g, '');
   const id = uuid();
+  // :todo, why insert a div before script tag
+  // `load` function used below, 
   const markup = `<div data-${DATA_KEY}="${key}" data-${DATA_ID}="${id}">${html}</div>`;
   const script = toScript({
     [DATA_KEY]: key,

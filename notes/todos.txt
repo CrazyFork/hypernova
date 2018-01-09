@@ -1,0 +1,10 @@
+
+todos:
+    done:
+
+    pending:
+        what is plugins ?
+        config document it
+        clear todos
+        read unit test?
+

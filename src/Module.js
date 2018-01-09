@@ -1,9 +1,11 @@
 import NativeModule from 'module';
-import has from 'has';
+import has from 'has'; // Object.hasOwnProperty() equivalent
 import path from 'path';
 import { ok } from 'assert';
-import { runInNewContext } from 'vm';
-
+import { runInNewContext } from 'vm'; 
+ 
+// process.binding, https://stackoverflow.com/questions/24042861/nodejs-what-does-process-binding-mean
+// return native module, it's not public.
 const NativeModules = process.binding('natives');
 
 // This means that you won't be able to affect VM extensions by mutating require.extensions
@@ -62,7 +64,7 @@ class Module {
 
   require(filePath) {
     ok(typeof filePath === 'string', 'path must be a string');
-    return Module.loadFile(filePath, this);
+    return Module.loadFile(filePath, this); // load child module
   }
 
   _compile(content, filename) {
@@ -128,7 +130,7 @@ class Module {
 
     return module.exports;
   }
-
+  // add custom file extension handler
   static addExtension(ext, f) {
     moduleExtensions[ext] = f;
   }

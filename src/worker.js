@@ -16,6 +16,8 @@ const attachEndpoint = (app, config, callback) => {
   app.post(config.endpoint, renderBatch(config, callback));
 };
 
+
+// set up an express server
 const initServer = (app, config, callback) => {
   let server;
 
@@ -64,6 +66,7 @@ const initServer = (app, config, callback) => {
 
       res.status(err.status).end();
 
+      // :bm, why not try/catch?
       // In a promise in case one of the plugins throws an error.
       new Promise(() => { // eslint-disable-line no-new
         const manager = new BatchManager(req, res, req.body, config);
@@ -99,6 +102,7 @@ const initServer = (app, config, callback) => {
 
 const worker = (app, config, onServer, workerId) => {
   // ===== Middleware =========================================================
+  // only use body-json middleware
   attachMiddleware(app, config);
 
   if (onServer) {

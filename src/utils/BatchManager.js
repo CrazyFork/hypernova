@@ -158,7 +158,7 @@ class BatchManager {
         return Promise.reject(notFound(name));
       }
 
-      return renderFn(context.props);
+      return renderFn(context.props); // :bm, render component with props
     }).then((html) => { // eslint-disable-line consistent-return
       if (!html) {
         return Promise.reject(noHTMLError);
