@@ -70,6 +70,8 @@ function serialize(name, html, data) {
   const id = uuid();
   // :todo, why insert a div before script tag
   // `load` function used below, 
+  // this div holds html content rendered by this lib,
+  // script tag, contains props data that can be re-rendererd by client
   const markup = `<div data-${DATA_KEY}="${key}" data-${DATA_ID}="${id}">${html}</div>`;
   const script = toScript({
     [DATA_KEY]: key,
@@ -78,6 +80,9 @@ function serialize(name, html, data) {
   return `${markup}\n${script}`;
 }
 
+// hypernova-react client would parse props data out of target script tag identify by `name` param
+// and use `ReactDOM.render` to re-render target react component using props data & mount it into 
+// target div tag identified by name
 function load(name) {
   const key = name.replace(/\W/g, '');
   const nodes = document.querySelectorAll(`div[data-${DATA_KEY}="${key}"]`);

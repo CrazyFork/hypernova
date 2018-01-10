@@ -9,6 +9,77 @@
 
 
 
+## doc:
+
+* TYPES: 
+  * `jobContext`, defined in BatchManager.js
+    * type:
+      ```js
+      {
+        name: string,
+        token: string,
+        props: data,
+        metadata: object,
+        statusCode: 200,
+        duration: null,
+        html: null,
+        returnMeta: {},
+      } 
+      ```
+
+  * `RenderFunction`: 
+    * type: `(props: object)=> string|Promise<string>`
+    * desc: 
+      * 可以看下 hypernova-react, 里边有 react render function 的封装, 注意此函数的语义, 
+      * 这个函数是 hypernova server 启动配置中 getComponent 需要返回的
+      * `props` 参数是 json request payload 中携带的
+
+  * json request's payload:
+    * desc: 需要向 hypernova server 发送 json 请求
+    * type:
+      ```js
+      {
+        [token: string]: {
+          name: string,
+          data: object,      // props would pass down to actual render function ` (props)=> string`
+          metadata: object   // metadata can be passed down to RenderFunction
+        } 
+      }
+      ```
+
+* hypernova server 启动配置
+
+  ```js
+  {
+    // the limit at which body parser will throw
+    bodyParser: { //json body-parser
+      limit: 1024 * 1000,
+    },
+    // runs on a single process
+    devMode: false,
+    // how components will be retrieved,
+    /*
+    has shap of 
+    `getComponent(name: string, context: jobContext): Promise<RenderFunction>`
+
+    @params name: 是 json request payload 中的值
+
+    */
+    getComponent: undefined, 
+    // if not overridden, default will return the number of reported cpus  - 1
+    getCPUs: undefined,
+    // the host the app will bind to
+    host: '0.0.0.0',
+    // configure the logger
+    logger: {},
+    // the port the app will start on
+    port: 8080,
+    // default endpoint path
+    endpoint: '/batch'
+  }
+  ```
+
+
 # Hypernova
 
 > A service for server-side rendering your JavaScript views

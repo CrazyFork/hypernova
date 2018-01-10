@@ -56,6 +56,13 @@ function now() {
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {Object} jobs - a map of token => Job
+ *        {
+ *          [token: string]: {
+ *            name: string,
+ *            data: any,      // props would pass down to actual render function ` (props)=> string`
+ *            metadata: any
+ *          }
+ *        }
  * @param {Object} config
  * @constructor
  */
@@ -68,6 +75,7 @@ class BatchManager {
     this.error = null;
     this.statusCode = 200;
 
+    // one context per request
     // An object that all of the contexts will inherit from... one per instance.
     this.baseContext = {
       request,
@@ -87,7 +95,7 @@ class BatchManager {
     this.jobContexts = tokens.reduce((obj, token) => {
       const { name, data, metadata } = jobs[token];
       /* eslint no-param-reassign: 1 */
-      obj[token] = {
+      obj[token] = { // jobContexts' shap
         name,
         token,
         props: data,
@@ -104,6 +112,12 @@ class BatchManager {
     // Each plugin receives it's own little key-value data store that is scoped privately
     // to the plugin for the life time of the request. This is achieved simply through lexical
     // closure.
+    /*
+    pluginContexts
+      {
+        plugin: {data: new Map()}
+      }
+    */
     this.pluginContexts = new Map();
     this.plugins.forEach((plugin) => {
       this.pluginContexts.set(plugin, { data: new Map() });

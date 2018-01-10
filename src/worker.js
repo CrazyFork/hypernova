@@ -68,6 +68,7 @@ const initServer = (app, config, callback) => {
 
       // :bm, why not try/catch?
       // In a promise in case one of the plugins throws an error.
+      // :todo, why create a BatchManger here
       new Promise(() => { // eslint-disable-line no-new
         const manager = new BatchManager(req, res, req.body, config);
         errorSync(err, config.plugins, manager);

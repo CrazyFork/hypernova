@@ -35,6 +35,7 @@ export default function hypernova(userConfig, onServer) {
 
   const app = express();
 
+  // :bm, when a process got spawned, it re-run code inside its enclosing function/context. ?
   if (config.devMode) {
     worker(app, config, onServer);
   } else if (cluster.isMaster) { // master, spawn child process
