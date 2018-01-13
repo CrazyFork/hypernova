@@ -97,6 +97,15 @@ function load(name) {
   });
 }
 
+/**
+ * 
+ * @param {*} runner , runner 的具体用法参考 hypernova-react lib
+ *    {
+ *      server: (props)=>string,        server 端通过这个返回 render function, render function 在 server.js 中getComponent field会用到
+ *      client: ()=>()              
+ *    }   
+ *  
+ */
 export default function hypernova(runner) {
   return typeof window === 'undefined'
     ? runner.server()

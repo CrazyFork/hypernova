@@ -6,13 +6,14 @@
 
 其他特性
 * node cluster 的封装运用
-
+* Promise.race
+* createGetComponent.js 中封装的虚拟机的逻辑需要好好注意下
 
 
 ## doc:
 
 * TYPES: 
-  * `jobContext`, defined in BatchManager.js
+  * `JobContext`, defined in BatchManager.js
     * type:
       ```js
       {
@@ -43,10 +44,31 @@
           name: string,
           data: object,      // props would pass down to actual render function ` (props)=> string`
           metadata: object   // metadata can be passed down to RenderFunction
-        } 
+        }
       }
       ```
+  * json response
+    * on success: defined in `BatchManager.js` `getResult` function
 
+      ```js
+      {
+        success: boolean, 
+        error: Error,
+        results: {
+          token: {
+            name: string,
+            html: string,
+            meta: Meta,
+            duration: number,
+            statusCode: number,
+            success: boolean,
+            error: SerializableError,
+          } 
+        }
+      }
+      ```
+    * 
+  
 * hypernova server 启动配置
 
   ```js
@@ -63,7 +85,7 @@
     `getComponent(name: string, context: jobContext): Promise<RenderFunction>`
 
     @params name: 是 json request payload 中的值
-
+    @param jobContext: 是 json request payload 中一些 meta, data 节点等合并的信息
     */
     getComponent: undefined, 
     // if not overridden, default will return the number of reported cpus  - 1
@@ -78,6 +100,46 @@
     endpoint: '/batch'
   }
   ```
+
+
+* hypernova 主入口的用法:
+  * const hypernova = require('hypernova'), 这个hypernova变量的作用
+    * server 端:
+      * hypernova react 库会用这个调用 `hypernova(name, component)`, 来返回一个 render function, type is `(props)=>string`
+        name 是唯一的id标示, component 是具体的react component 对象, 这个方法需要传递到 hypernova server 中的 getComponent 的配置中返回
+      * client 端则会执行一个内部封装的函数, 把 component 对象 mount 到通过 `name` 找到的 dom 节点上
+    
+
+
+* plugin lifecycle
+  * type defination:
+    * `manager`: see `BatchManager.js`
+    * `token`: job token, send in json payload
+    * `context`: some context infomation
+  * ---- json request in --------
+    * batchStart(manager)
+      * fore each job:
+        * jobStart(manager, token)
+        * beforeRender(manager, token)
+        * ---- actutal rendering started ---
+        * afterRender(manager, token)
+        * jobEnd(manager, token)
+        * ---- if any error happens ----
+          * onError(context, error), and eats up error poped in this process
+    * batchEnd(manager)
+      * ---- if any error happens ----
+        * record result into job context or manager instance
+        * onError(context, error)
+    * `res.status(manager.statusCode).json(manager.getResults)` 
+      * ---- if any error --
+        * `res.status(manager.statusCode).end()`
+  
+* 入口文件
+
+  * src/index.js: 封装了一些序列化和反序列化的函数, 还有 hypernova 的 default export
+  * src/server: 启动一个hypernova server 需要访问这个问题件
+  * src/createGetComponent.js, 这个文件比较重要, 在 hypernova server 的config中, getComponent 这一属性需要通过 name & context 返回一个 Promise<RenderFunction>, 
+  中间需要加载 Component, 和通过这里边定义的 createGetComponent , 创造的虚拟机来执行这个不会污染外层的global对象
 
 
 # Hypernova
